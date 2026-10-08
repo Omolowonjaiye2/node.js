@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3500;
 
 app.use(express.json());
 
@@ -10,7 +10,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 //app.use('/', require('./routes/roots'));
 
 
-app.use('/api/employees', require('./routes/api/employees.js'));
+app.use('/api/employees', require('./routes/api/employees'));
 
 app.use('*', (req, res) => {
     res.status(404).sendFile(path.join(__dirname, 'views/404.html'));
