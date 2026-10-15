@@ -1,10 +1,9 @@
-const router = require('express').Router();
-const { get } = require('http');
+const express = require('express');
+const router = express.Router();
 const path = require('path');
 const data = {};
-data.employees = require(path.join(__dirname, 
-    '../../model/data/employees.json'));
-const { getAllEmployees, createNewEmployee, updateEmployee, deleteEmployee, getEmployee } = require('../../controllers/employeesController');
+data.employees = require('../../Model/employees.json');
+const { getAllEmployees, createNewEmployee, updateEmployee, deleteEmployee, getEmployee } = require('../../public/controllers/employeesController');
 
 router.route('/')  
 .get(getAllEmployees)

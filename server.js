@@ -7,10 +7,12 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, 'public')));   
 
-//app.use('/', require('./routes/roots'));
+app.use('/', require('./routes/roots'));
 
 
 app.use('/api/employees', require('./routes/api/employees'));
+app.use('/api/register', require('./routes/api/register'));
+// app.use('/api/auth', require('./routes/api/auth'));
 
 app.use('*', (req, res) => {
     res.status(404).sendFile(path.join(__dirname, 'views/404.html'));
