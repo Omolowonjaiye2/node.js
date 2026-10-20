@@ -15,9 +15,30 @@ const handleNewUser = async (req, res) =>
         
         const match = await bycrypt.compare(pwd, foundUser.password);
         if (match) {
-            res.status(200).json({ 'success': `User ${user} is logged in!` });
+            const accessToken = jwt.sign(
+                { "username": foundUser.username 
+                    
+                },
+                process.env.ACCESS_TOKEN_SECRET,
+                { expiresIn: '30s' }
+            );
+            const refreshToken = jwt.sign(
+                { "username": foundUser.username },
+                process.env.REFRESH_TOKEN_SECRET,
+                { expiresIn: '1d' }
+            );
+            const otherUsers = userDB.users.filter(person => person.username !== foundUser.username);
+            const currentUser = { ...foundUser, refreshToken };
+            userDB.setUser([...otherUsers, currentUser]);
+            await fsPromises.writeFile(
+                path.join(__dirname, '..', '..', 'Model', 'user.json'),
+                JSON.stringify(userDB.user)
+            );
+            res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', secure: true, maxAge: 24 * 60 * 60 * 1000 });
+            res.json({ accessToken });
+            res.status(200).json({ 'success': `User ${user} is logged in!`, 'accessToken': accessToken, 'refreshToken': refreshToken });
         } else {
-            res.status(401)
+            res.status(401).json({ 'message': 'Invalid credentials.' });
         }
 
     }

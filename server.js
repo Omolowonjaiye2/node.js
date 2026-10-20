@@ -1,6 +1,8 @@
 const path = require('path');
 const express = require('express');
+const verifyJWT = require('./Middleware/verifyJWT');
 const app = express();
+const cookieParser = require('cookie-parser');
 const PORT = process.env.PORT || 3500;
 
 app.use(express.json());
@@ -9,13 +11,13 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));   
 
 app.use('/', require('./routes/roots'));
-
-
-app.use('/api/employees', require('./routes/api/employees'));
 app.use('/api/register', require('./routes/api/register'));
 app.use('/api/login', require('./routes/api/login'));
 app.use('/api/refresh', require('./routes/api/refresh'));
 app.use('/api/logout', require('./routes/api/logout'));
+
+app.use(verifyJWT)
+app.use('/api/employees', require('./routes/api/employees'));
 
 app.use('*', (req, res) => {
     res.status(404).sendFile(path.join(__dirname, 'views/404.html'));
